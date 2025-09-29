@@ -5,8 +5,11 @@ import { AlertNotificationRoot } from "react-native-alert-notification";
 import { useTheme } from "../theme/ThemeProvider";
 import { FloatingLabelInput } from "react-native-floating-label-input";
 import { useState } from "react";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStack } from "../../App";
+import { useNavigation } from "@react-navigation/native";
 
-
+type SignUpProps = NativeStackNavigationProp<RootStack, "SignUpScreen">;
 
 export default function SignUpScreen() {
 
@@ -16,7 +19,7 @@ export default function SignUpScreen() {
     const { applied } = useTheme();
     const logo = applied === "dark" ? require("../../assets/logo-dark.png") : require("../../assets/logo.png");
 
-
+    const navigation = useNavigation<SignUpProps>();
 
     return (
 
@@ -48,7 +51,7 @@ export default function SignUpScreen() {
 
                     <View className="absolute bottom-5 w-full p-5">
 
-                        <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl">
+                        <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl" onPress={ () => navigation.replace("ContactScreen")}>
                             <Text className="text-slate-100 dark:text-slate-100 font-bold text-2xl">
 
                                 Next
