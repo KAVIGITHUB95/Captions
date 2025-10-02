@@ -2,9 +2,12 @@ import { useState } from "react";
 import { StatusBar, View, Image, Text, Pressable, FlatList, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from 'expo-image-picker';
+import { useUserRegistration } from "../components/UserContext";
 
 export default function AvatarScreen() {
     const [image, setImage] = useState<string | null>(null);
+
+    const { userData, setUserData } = useUserRegistration();
 
     const pickImage = async () => {
 
@@ -16,14 +19,11 @@ export default function AvatarScreen() {
         });
 
 
-
         if (!result.canceled) {
-
             setImage(result.assets[0].uri);
+            setUserData((previous) => ({ ...previous, profileImage: result.assets[0].uri, }));
+
         }
-
-
-
 
     };
 
@@ -35,6 +35,8 @@ export default function AvatarScreen() {
         require("../../assets/avatar/avatar_5.png"),
         require("../../assets/avatar/avatar_6.png"),
     ];
+
+
 
     return (
 
@@ -76,13 +78,27 @@ export default function AvatarScreen() {
                         Or select an avatar
                     </Text>
                     <FlatList data={avatars} horizontal keyExtractor={(_, index) => index.toString()} renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => setImage(Image.resolveAssetSource(item).uri)}>
+                        <TouchableOpacity onPress={() => {
+                            setImage(Image.resolveAssetSource(item).uri);
+                            setUserData((previous) => ({ ...previous, profileImage: Image.resolveAssetSource(item).uri, }));
+                        }}
+                        >
+
                             <Image source={item} className="h-20 w-20 rounded-full mx-2 border-2 border-gray-200"></Image>
                         </TouchableOpacity>
                     )}
                         contentContainerStyle={{ paddingHorizontal: 10 }}
                         showsHorizontalScrollIndicator={false} />
                 </View>
+            </View>
+
+            <View className="w-full p-5">
+                <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl" onPress={() => { setUserData((previous) => ({ ...previous, profileImage: image, })); console.log(userData); }}>
+                    <Text className="text-slate-100 dark:text-slate-100 font-bold text-2xl">
+
+                        Create Account
+                    </Text>
+                </Pressable>
 
             </View>
 
