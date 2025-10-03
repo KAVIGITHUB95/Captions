@@ -3,6 +3,8 @@ import { StatusBar, View, Image, Text, Pressable, FlatList, TouchableOpacity } f
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from 'expo-image-picker';
 import { useUserRegistration } from "../components/UserContext";
+import { validateProfileImage } from "../../util/Validation";
+import { ALERT_TYPE, Toast } from "react-native-alert-notification";
 
 export default function AvatarScreen() {
     const [image, setImage] = useState<string | null>(null);
@@ -16,8 +18,8 @@ export default function AvatarScreen() {
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
+        
         });
-
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
@@ -44,10 +46,10 @@ export default function AvatarScreen() {
 
             <StatusBar hidden={true} />
 
-            <View className="flex-1 items-center bg-red-100">
+            <View className="flex-1 items-center">
                 <View>
 
-                    <Image source={require("../../assets/logo.png")} className="h-40 w-36" />
+                    <Image source={require("../../assets/Captions.png")} className="h-40 w-36" />
 
                 </View>
                 <View className="items-center">
@@ -93,7 +95,16 @@ export default function AvatarScreen() {
             </View>
 
             <View className="w-full p-5">
-                <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl" onPress={() => { setUserData((previous) => ({ ...previous, profileImage: image, })); console.log(userData); }}>
+                <Pressable className="bg-green-600 h-14 justify-center items-center rounded-xl" onPress={() => {
+                    const validProfile = validateProfileImage(
+                        userData.profileImage ? { uri: userData.profileImage, type: "", fileSize: 0 } : null
+                    );
+                    if (validProfile) {
+                        Toast.show({ type: ALERT_TYPE.WARNING, title: "Warning", textBody: "Select a profile image or an avatar",});
+                    } else {
+                        console.log("done");
+                    }
+                    setUserData((previous) => ({ ...previous, profileImage: image, })); console.log(userData);}}>
                     <Text className="text-slate-100 dark:text-slate-100 font-bold text-2xl">
 
                         Create Account
